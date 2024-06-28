@@ -10,6 +10,7 @@ import {
   Card,
   Button,
   Form,
+  Modal,
 } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import {
@@ -31,6 +32,11 @@ const ProductScreen = () => {
   const [qty, setQty] = useState(1);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [fullName, setFullName] = useState('');
+  const [cellphone, setCellphone] = useState('');
+  const [email, setEmail] = useState('');
+  const [customizationDetails, setCustomizationDetails] = useState('');
 
   const addToCartHandler = () => {
     dispatch(addToCart({ ...product, qty }));
@@ -63,6 +69,18 @@ const ProductScreen = () => {
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }
+  };
+
+  const handleModalClose = () => setShowModal(false);
+  const handleModalShow = () => setShowModal(true);
+
+  const handleCustomizationSubmit = (e) => {
+    e.preventDefault();
+    // Handle the form submission for customization quote
+    // Example: send the data to the server or display a success message
+    console.log({ fullName, cellphone, email, customizationDetails });
+    toast.success('Customization request submitted successfully');
+    handleModalClose();
   };
 
   return (
@@ -98,19 +116,19 @@ const ProductScreen = () => {
                 <ListGroup.Item>
                   Description: {product.description}
                 </ListGroup.Item>
+                <ListGroup.Item>
+                  <span
+                    style={{ textDecoration: 'underline', cursor: 'pointer' }}
+                    onClick={handleModalShow}
+                  >
+                    Do you want a customization? Get a quote by clicking here
+                  </span>
+                </ListGroup.Item>
               </ListGroup>
             </Col>
             <Col md={3}>
               <Card>
                 <ListGroup variant='flush'>
-                  <ListGroup.Item>
-                    <Row>
-                      <Col>Price:</Col>
-                      <Col>
-                        <strong>${product.price}</strong>
-                      </Col>
-                    </Row>
-                  </ListGroup.Item>
                   <ListGroup.Item>
                     <Row>
                       <Col>Status:</Col>
@@ -223,6 +241,57 @@ const ProductScreen = () => {
           </Row>
         </>
       )}
+
+      <Modal show={showModal} onHide={handleModalClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Customization Quote</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Fill out the form to request a customization quote for this product.</p>
+          <Form onSubmit={handleCustomizationSubmit}>
+            <Form.Group controlId='fullName' className='mb-3'>
+              <Form.Label>Full Name</Form.Label>
+              <Form.Control
+                type='text'
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <Form.Group controlId='cellphone' className='mb-3'>
+              <Form.Label>Cellphone</Form.Label>
+              <Form.Control
+                type='tel'
+                value={cellphone}
+                onChange={(e) => setCellphone(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <Form.Group controlId='email' className='mb-3'>
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type='email'
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <Form.Group controlId='customizationDetails' className='mb-3'>
+              <Form.Label>Customization Details</Form.Label>
+              <Form.Control
+                as='textarea'
+                rows={3}
+                value={customizationDetails}
+                onChange={(e) => setCustomizationDetails(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <Button variant='primary' type='submit'>
+              Submit
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
     </>
   );
 };
