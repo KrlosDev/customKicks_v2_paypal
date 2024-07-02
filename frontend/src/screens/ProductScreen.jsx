@@ -16,6 +16,7 @@ import { toast } from 'react-toastify';
 import {
   useGetProductDetailsQuery,
   useCreateReviewMutation,
+  useUploadProductImageMutation,
 } from '../slices/productsApiSlice';
 import Rating from '../components/Rating';
 import Loader from '../components/Loader';
@@ -30,16 +31,18 @@ const ProductScreen = () => {
   const navigate = useNavigate();
 
   const [qty, setQty] = useState(1);
+  const [size, setSize] = useState(7);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [fullName, setFullName] = useState('');
   const [cellphone, setCellphone] = useState('');
   const [email, setEmail] = useState('');
+  const [image, setImage] = useState('');
   const [customizationDetails, setCustomizationDetails] = useState('');
 
   const addToCartHandler = () => {
-    dispatch(addToCart({ ...product, qty }));
+    dispatch(addToCart({ ...product, qty, size }));
     navigate('/cart');
   };
 
@@ -71,14 +74,29 @@ const ProductScreen = () => {
     }
   };
 
+  const [uploadProductImage] =
+    useUploadProductImageMutation();
+
   const handleModalClose = () => setShowModal(false);
   const handleModalShow = () => setShowModal(true);
+
+  const uploadFileHandler = async (e) => {
+    const formData = new FormData();
+    formData.append('image', e.target.files[0]);
+    try {
+      const res = await uploadProductImage(formData).unwrap();
+      toast.success(res.message);
+      setImage(res.image);
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
+    }
+  };
 
   const handleCustomizationSubmit = (e) => {
     e.preventDefault();
     // Handle the form submission for customization quote
     // Example: send the data to the server or display a success message
-    console.log({ fullName, cellphone, email, customizationDetails });
+    console.log({ fullName, cellphone, email, customizationDetails, image });
     toast.success('Customization request submitted successfully');
     handleModalClose();
   };
@@ -140,26 +158,48 @@ const ProductScreen = () => {
 
                   {/* Qty Select */}
                   {product.countInStock > 0 && (
-                    <ListGroup.Item>
-                      <Row>
-                        <Col>Qty</Col>
-                        <Col>
-                          <Form.Control
-                            as='select'
-                            value={qty}
-                            onChange={(e) => setQty(Number(e.target.value))}
-                          >
-                            {[...Array(product.countInStock).keys()].map(
-                              (x) => (
-                                <option key={x + 1} value={x + 1}>
-                                  {x + 1}
+                    <>
+                      <ListGroup.Item>
+                        <Row>
+                          <Col>Qty</Col>
+                          <Col>
+                            <Form.Control
+                              as='select'
+                              value={qty}
+                              onChange={(e) => setQty(Number(e.target.value))}
+                            >
+                              {[...Array(product.countInStock).keys()].map(
+                                (x) => (
+                                  <option key={x + 1} value={x + 1}>
+                                    {x + 1}
+                                  </option>
+                                )
+                              )}
+                            </Form.Control>
+                          </Col>
+                        </Row>
+                      </ListGroup.Item>
+
+                      {/* Size Select */}
+                      <ListGroup.Item>
+                        <Row>
+                          <Col>Size</Col>
+                          <Col>
+                            <Form.Control
+                              as='select'
+                              value={size}
+                              onChange={(e) => setSize(Number(e.target.value))}
+                            >
+                              {[7,7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11, 11.5, 12].map((s) => (
+                                <option key={s} value={s}>
+                                  {s}
                                 </option>
-                              )
-                            )}
-                          </Form.Control>
-                        </Col>
-                      </Row>
-                    </ListGroup.Item>
+                              ))}
+                            </Form.Control>
+                          </Col>
+                        </Row>
+                      </ListGroup.Item>
+                    </>
                   )}
 
                   <ListGroup.Item>
@@ -275,6 +315,20 @@ const ProductScreen = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
+            </Form.Group>
+            <Form.Group controlId='image' className='mb-3'>
+              <Form.Label>Image</Form.Label>
+              <Form.Control
+                type='text'
+                placeholder='Enter image url'
+                value={image}
+                onChange={(e) => setImage(e.target.value)}
+              ></Form.Control>
+              <Form.Control
+                label='Choose File'
+                onChange={uploadFileHandler}
+                type='file'
+              ></Form.Control>
             </Form.Group>
             <Form.Group controlId='customizationDetails' className='mb-3'>
               <Form.Label>Customization Details</Form.Label>

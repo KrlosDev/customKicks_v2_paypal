@@ -22,8 +22,8 @@ const CartScreen = () => {
 
   // NOTE: no need for an async function here as we are not awaiting the
   // resolution of a Promise
-  const addToCartHandler = (product, qty) => {
-    dispatch(addToCart({ ...product, qty }));
+  const addToCartHandler = (product, qty, size) => {
+    dispatch(addToCart({ ...product, qty, size }));
   };
 
   const removeFromCartHandler = (id) => {
@@ -55,6 +55,7 @@ const CartScreen = () => {
                   </Col>
                   <Col md={2}>${item.price}</Col>
                   <Col md={2}>
+                  Qty
                     <Form.Control
                       as='select'
                       value={item.qty}
@@ -67,6 +68,20 @@ const CartScreen = () => {
                           {x + 1}
                         </option>
                       ))}
+                    </Form.Control>
+                    Size
+                    <Form.Control
+                      as='select'
+                      value={item.size}
+                      onChange={(e) => addToCartHandler(Number(e.target.value))}
+                    >
+                      {[7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11, 11.5, 12].map(
+                        (s) => (
+                          <option key={s} value={s}>
+                            {s}
+                          </option>
+                        )
+                      )}
                     </Form.Control>
                   </Col>
                   <Col md={2}>
