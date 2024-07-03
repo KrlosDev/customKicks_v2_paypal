@@ -25,7 +25,7 @@ const Footer = () => {
               </p>
             </div>
             <div>
-              <p><FaInstagram/> Custom Kicks</p>
+              <p><FaInstagram/> <a href='https://www.instagram.com/invites/contact/?igsh=15re076cnipwu&utm_content=un1dvx3' target='_blank' className='text-primary'>customkickspanama</a></p>
               <p> <FaFacebook/> <a href='https://www.facebook.com/profile.php?id=61560725158505' target='_blank' rel='noopener noreferrer' className='text-primary'>Custom Kicks</a></p>
             </div>
           </div>
