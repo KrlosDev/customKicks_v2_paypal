@@ -91,16 +91,41 @@ const ProductScreen = () => {
       toast.error(err?.data?.message || err.error);
     }
   };
-
-  const handleCustomizationSubmit = (e) => {
+  const handleCustomizationSubmit = async (e) => {
     e.preventDefault();
-    // Handle the form submission for customization quote
-    // Example: send the data to the server or display a success message
-    console.log({ fullName, cellphone, email, customizationDetails, image });
-    toast.success('Customization request submitted successfully');
-    handleModalClose();
-  };
 
+    // Implement logic to send data to the server
+    try {
+      const response = await fetch('/api/customizations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName,
+          cellphone,
+          email,
+          customizationDetails,
+          image, // Assuming 'image' is either a URL or uploaded image data
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success('Customization request submitted successfully');
+        setFullName(''); // Clear form data
+        setCellphone('');
+        setEmail('');
+        setImage('');
+        setCustomizationDetails('');
+        handleModalClose();
+      } else {
+        toast.error(data.message || 'An error occurred');
+      }
+    } catch (err) {
+      console.error('Error submitting customization request:', err);
+      toast.error('An error occurred');
+    }
+  };
   return (
     <>
       <Link className='btn btn-light my-3' to='/'>
