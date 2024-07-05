@@ -4,12 +4,12 @@ import multer from 'multer';
 
 const router = express.Router();
 
-const uploadFolder =
-  process.env.NODE_ENV === 'production' ? '/var/data/uploads/' : 'uploads/'; // adjustments for render.com
+// const uploadFolder =
+//   process.env.NODE_ENV === 'production' ? 'var/data/' : 'uploads/'; // adjustments for render.com
 
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    cb(null, uploadFolder);
+    cb(null, 'uploads/');
   },
   filename(req, file, cb) {
     cb(
