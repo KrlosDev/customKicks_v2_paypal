@@ -6,7 +6,7 @@ import {
   createCustomization,
   updateCustomization,
   deleteCustomization,
-} from '../controllers/customizationController'; // Assuming 'customizationController.js' exists
+} from '../controllers/customizationController.js'; // Assuming 'customizationController.js' exists
 
 // Public routes (no authentication required)
 router.get('/', getCustomizations); // Get all customizations
